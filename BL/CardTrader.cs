@@ -25,4 +25,11 @@ public class CardTrader : IBL {
             }
         }
     }
+
+    public bool CheckUsernameExists(string s) {
+        if (_d1.CheckDbForUsername(s)) {
+            return true;
+        }
+        return false;
+    }
 }

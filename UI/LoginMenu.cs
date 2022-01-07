@@ -1,4 +1,6 @@
 using UI;
+using BL;
+using DL;
 namespace UI;
 
 public class LoginMenu {
@@ -18,7 +20,7 @@ public class LoginMenu {
                 flag = true;
             } 
             else if (input == "1") {
-                NewAccount newAccount = new NewAccount();
+                NewAccount newAccount = new NewAccount(new CardTrader(new DBRepo(File.ReadAllText("connectionstring.txt"))));
                 newAccount.Start();
                 Console.WriteLine("New account created!");
                 flag = true;
