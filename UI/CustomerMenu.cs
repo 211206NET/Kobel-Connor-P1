@@ -1,6 +1,14 @@
+using BL;
 namespace UI;
 
 public class CustomerMenu {
+
+    private IBL _bl;
+    public CustomerMenu(IBL bl)
+    {
+        _bl = bl;
+    }
+
     public void Start() {
         bool flag = false;
 
@@ -14,7 +22,8 @@ public class CustomerMenu {
         while (!flag){
             if (input == "0") {
                 // DL Display all cards from all stores
-                Console.WriteLine("All cards from all stores");
+                _bl.GetAllPokemonCards();
+
                 Console.WriteLine("\nAnything else?");
                 Console.WriteLine("[0] View inventory of all stores");
                 Console.WriteLine("[1] View inventory of a specific store");

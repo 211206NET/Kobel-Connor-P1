@@ -6,5 +6,5 @@ public class Customer {
     public string FirstName {get;set;}
     public string LastName {get;set;}
     public string Password {get;set;}
-    public List<Orders> Orders {get;set;}
+    public List<OrderSummary> Orders {get;set;}
 }

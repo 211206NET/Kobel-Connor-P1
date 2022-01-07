@@ -6,7 +6,7 @@ public class ShoppingCart {
     public decimal RunningTotal {get;set;}
     public decimal CalculateRunningTotal() {
         decimal runningTotal = 0;
-        if(this.CardID?.Count > 0) {
+        if(this.StoreOrders?.Count > 0) {
             foreach(StoreOrder storeorder in this.StoreOrders) {
                 runningTotal += storeorder.CalculateOrderPrice();
             }

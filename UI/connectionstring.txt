@@ -1,0 +1,1 @@
+Server=revatureprojectzero.cc5jk01zeyle.us-west-1.rds.amazonaws.com,1433;Initial Catalog=PokemonCardStoreDB;User ID=admin;Password=Pa$$w0rd;Encrypt=False;

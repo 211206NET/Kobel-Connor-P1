@@ -8,7 +8,7 @@ public class StoreOrder {
         decimal orderPrice = 0;
         if(this.PokemonCards?.Count > 0) {
             foreach(PokemonCard pokecard in this.PokemonCards) {
-                orderPrice += PokemonCards.Price;
+                orderPrice += pokecard.Price;
             }
         }
         this.OrderPrice = orderPrice;
