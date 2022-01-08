@@ -3,14 +3,14 @@ using DL;
 
 namespace BL;
 public class CardTrader : IBL {
-    private IRepo _d1;
+    private IRepo _dl;
 
     public CardTrader(IRepo repo) {
-        _d1 = repo;
+        _dl = repo;
     }
 
     public void GetAllPokemonCards() {
-        List<PokemonCard> pokemonCards = _d1.GetAllPokemonCards();
+        List<PokemonCard> pokemonCards = _dl.GetAllPokemonCards();
 
         if (pokemonCards.Count == 0) {
             Console.WriteLine("There are currently no Pokemon cards for sale.");
@@ -27,7 +27,18 @@ public class CardTrader : IBL {
     }
 
     public bool CheckUsernameExists(string s) {
-        if (_d1.CheckDbForUsername(s)) {
+        if (_dl.CheckDbForUsername(s)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void AddNewUser(Customer c) {
+        _dl.AddNewUserDB(c);
+    }
+
+    public bool Login(string u, string p) {
+        if (_dl.LoginDB(u, p)) {
             return true;
         }
         return false;
