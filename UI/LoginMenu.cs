@@ -22,9 +22,6 @@ public class LoginMenu {
             else if (input == "1") {
                 NewAccount newAccount = new NewAccount(new CardTrader(new DBRepo(File.ReadAllText("connectionstring.txt"))));
                 newAccount.Start();
-                Console.WriteLine("\nNew account created!");
-                CustomerMenu customerMenu = new CustomerMenu(new CardTrader(new DBRepo(File.ReadAllText("connectionstring.txt"))));
-                customerMenu.Start();
                 flag = true;
             }
             else if (input == "exit") {

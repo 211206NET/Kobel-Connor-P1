@@ -8,4 +8,5 @@ public class PokemonCard {
     public string ConditionTitle {get;set;}
     public string FoilTitle {get;set;}
     public decimal Price {get;set;}
+    public int Quantity {get;set;}
 }

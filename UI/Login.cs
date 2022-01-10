@@ -20,7 +20,7 @@ public class Login {
         if (_bl.Login(username, password)) {
             Console.WriteLine("\nAccount logged in!");
             CustomerMenu customerMenu = new CustomerMenu(new CardTrader(new DBRepo(File.ReadAllText("connectionstring.txt"))));
-            customerMenu.Start();
+            customerMenu.Start(username);
         } else {
             Console.WriteLine("\nYou entered incorrect credentials, Would you like to try again?\n('y' to try again, any other character to go back)");
             input = Console.ReadLine();

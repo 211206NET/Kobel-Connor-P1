@@ -1,4 +1,5 @@
 using BL;
+using DL;
 using BC = BCrypt.Net.BCrypt;
 using Models;
 namespace UI;
@@ -47,5 +48,8 @@ public class NewAccount {
 
         // DL to add new username and password
         _bl.AddNewUser(c);
+        Console.WriteLine("\nNew account created!");
+        CustomerMenu customerMenu = new CustomerMenu(new CardTrader(new DBRepo(File.ReadAllText("connectionstring.txt"))));
+        customerMenu.Start(username);
     }
 }

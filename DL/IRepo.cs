@@ -6,4 +6,6 @@ public interface IRepo
     bool CheckDbForUsername(string s);
     bool LoginDB(string u, string p);
     void AddNewUserDB(Customer c);
+    void AddCardToShoppingCart(PokemonCard card, int quantity, string username);
+    bool CardAlreadyInShoppingCart(PokemonCard card);
 }
