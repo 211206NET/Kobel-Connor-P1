@@ -89,7 +89,7 @@ public class DBRepo : IRepo {
         connection.Close();
     }
 
-    public List<PokemonCard> GetAllPokemonCards() {
+    public List<PokemonCard> GetAllPokemonCardsDB() {
         List<PokemonCard> allPokemonCards = new List<PokemonCard>();
 
         using SqlConnection connection = new SqlConnection(_connectionString);
@@ -122,7 +122,7 @@ public class DBRepo : IRepo {
         return allPokemonCards;
     }
 
-    public bool CardAlreadyInShoppingCart(PokemonCard card) {
+    public bool CardAlreadyInShoppingCartDB(PokemonCard card) {
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
             connection.Open();
             using (SqlTransaction transaction = connection.BeginTransaction()) {
@@ -149,7 +149,7 @@ public class DBRepo : IRepo {
         return false;
     }
 
-    public void AddCardToShoppingCart(PokemonCard card, int quantity, string username) {
+    public void AddCardToShoppingCartDB(PokemonCard card, int quantity, string username) {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
         string sqlCmd = "INSERT INTO ShoppingCart (username, storeID, cardID, quantity, individualPrice) VALUES (@USERNAME, @STOREID, @CARDID, @QUANTITY, @INDIVIDUALPRICE)";
@@ -162,5 +162,319 @@ public class DBRepo : IRepo {
 
         addNew.ExecuteNonQuery();
         connection.Close();
+    }
+
+    public int CardsAvailableForIndividualStoreDB(StoreFront store) {
+        int total = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)) {
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction()) {
+                try {
+                    string getQuantity = "SELECT SUM(quantity) FROM Inventory WHERE storeID = @STOREID";
+                    adapter.InsertCommand = new SqlCommand(getQuantity, connection, transaction);
+                    adapter.InsertCommand.Parameters.Add("@STOREID", SqlDbType.VarChar).Value = store.StoreID;
+
+                    adapter.InsertCommand.Transaction = transaction;
+                    total = Convert.ToInt32(adapter.InsertCommand.ExecuteScalar());
+
+                    transaction.Commit();
+                    connection.Close();
+                }
+                catch (SqlException ex) {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.Source);
+                }
+            }
+        }
+        return total;
+    }
+    
+    public List<StoreFront> GetAllStoreFrontsDB() {
+        List<StoreFront> allStores = new List<StoreFront>();
+
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        string storesSelect = "SELECT * FROM StoreFront";
+
+        DataSet StoreSet = new DataSet();
+
+        using SqlDataAdapter storeAdapter = new SqlDataAdapter(storesSelect, connection);
+
+        storeAdapter.Fill(StoreSet, "StoreFront");
+
+        DataTable? StoreTables = StoreSet.Tables["StoreFront"];
+
+        if (StoreTables != null) {
+            foreach(DataRow row in StoreTables.Rows) {
+                StoreFront store = new StoreFront();
+                store.StoreID = Convert.ToInt32(row["storeID"]);
+                store.Username = Convert.ToString(row["username"]);
+                store.City = Convert.ToString(row["city"]);
+                store.State = Convert.ToString(row["state"]);
+
+                allStores.Add(store);
+            }
+        }
+
+        return allStores;
+    }
+
+    public List<PokemonCard> GetStoreCardsDB(int storeID) {
+        List<PokemonCard> allPokemonCards = new List<PokemonCard>();
+
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        string cardsSelect = "SELECT * FROM PokemonCard INNER JOIN Inventory ON Inventory.CardID = PokemonCard.CardID INNER JOIN Condition ON Condition.conditionID = PokemonCard.conditionID INNER JOIN Foil ON Foil.foilID = PokemonCard.foilID WHERE storeID = @STOREID ORDER BY cardName";
+        /*
+            "SELECT * FROM PokemonCard 
+            INNER JOIN Inventory ON Inventory.CardID = PokemonCard.CardID 
+            INNER JOIN Condition ON Condition.conditionID = PokemonCard.conditionID 
+            INNER JOIN Foil ON Foil.foilID = PokemonCard.foilID 
+            WHERE storeID = @STOREID 
+            ORDER BY cardName"
+        */
+        DataSet CardSet = new DataSet();
+
+        using SqlDataAdapter cardAdapter = new SqlDataAdapter(cardsSelect, connection);
+        cardAdapter.SelectCommand.Parameters.AddWithValue("@STOREID", storeID);
+
+        cardAdapter.Fill(CardSet, "PokemonCard");
+
+        DataTable? PokemonCardTable = CardSet.Tables["PokemonCard"];
+
+        if (PokemonCardTable != null) {
+            foreach(DataRow row in PokemonCardTable.Rows) {
+                PokemonCard card = new PokemonCard();
+                card.StoreID = Convert.ToInt32(row["storeID"]);
+                card.CardID = Convert.ToInt32(row["cardID"]);
+                card.CardName = Convert.ToString(row["cardName"]);
+                card.CardSet = Convert.ToString(row["cardSet"]);
+                card.ConditionTitle = Convert.ToString(row["conditionTitle"]);
+                card.FoilTitle = Convert.ToString(row["foilTitle"]);
+                card.Price = Convert.ToDecimal(row["price"]);
+                card.Quantity = Convert.ToInt32(row["quantity"]);
+
+                allPokemonCards.Add(card);
+            }
+        }
+
+        return allPokemonCards;
+    }
+
+    public List<PokemonCard> ShowYourCartDB(string s) {
+        List<PokemonCard> cardCart = new List<PokemonCard>();
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        string cartCmd = "SELECT * FROM ShoppingCart INNER JOIN Inventory ON Inventory.cardID = ShoppingCart.cardID INNER JOIN PokemonCard ON PokemonCard.cardID = Inventory.cardID INNER JOIN Condition ON Condition.conditionID = PokemonCard.conditionID INNER JOIN Foil ON Foil.foilID = PokemonCard.foilID WHERE username = @USERNAME";
+        
+        DataSet CartSet = new DataSet();
+
+        using SqlDataAdapter cartAdapter = new SqlDataAdapter(cartCmd, connection);
+        cartAdapter.SelectCommand.Parameters.AddWithValue("@USERNAME", s);
+
+        cartAdapter.Fill(CartSet, "ShoppingCart");
+
+        DataTable? CartTable = CartSet.Tables["ShoppingCart"];
+
+        if (CartTable != null) {
+            foreach(DataRow row in CartTable.Rows) {
+                PokemonCard card = new PokemonCard();
+                card.StoreID = Convert.ToInt32(row["storeID"]);
+                card.CardID = Convert.ToInt32(row["cardID"]);
+                card.CardName = Convert.ToString(row["cardName"]);
+                card.CardSet = Convert.ToString(row["cardSet"]);
+                card.ConditionTitle = Convert.ToString(row["conditionTitle"]);
+                card.FoilTitle = Convert.ToString(row["foilTitle"]);
+                card.Price = Convert.ToDecimal(row["price"]);
+                card.Quantity = Convert.ToInt32(row["quantity"]);
+                cardCart.Add(card);
+            }
+        }
+        return cardCart;
+    }
+
+    public void DeleteCardFromShoppingCartDB(PokemonCard card, string username) {
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        string sqlCmd = "DELETE FROM ShoppingCart WHERE username = @USERNAME AND cardID = @CARDID";
+        using SqlCommand addNew = new SqlCommand(sqlCmd, connection);
+        addNew.Parameters.AddWithValue("@USERNAME", username);
+        addNew.Parameters.AddWithValue("@CARDID", card.CardID);
+
+        addNew.ExecuteNonQuery();
+        connection.Close();
+    }
+
+    public decimal GetTotalPriceDB(string username) {
+        decimal total = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)) {
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction()) {
+                try {
+                    string getTotal = "SELECT SUM(individualPrice) FROM ShoppingCart WHERE username = @USERNAME";
+                    adapter.InsertCommand = new SqlCommand(getTotal, connection, transaction);
+                    adapter.InsertCommand.Parameters.Add("@USERNAME", SqlDbType.VarChar).Value = username;
+
+                    adapter.InsertCommand.Transaction = transaction;
+                    total = Convert.ToDecimal(adapter.InsertCommand.ExecuteScalar());
+
+                    transaction.Commit();
+                    connection.Close();
+                }
+                catch (SqlException ex) {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.Source);
+                }
+            }
+        }
+        return total;
+    }
+
+    public void CleanAfterCheckoutDB(string username) {
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        string sqlCmd = "DELETE FROM ShoppingCart WHERE username = @USERNAME";
+        using SqlCommand addNew = new SqlCommand(sqlCmd, connection);
+        addNew.Parameters.AddWithValue("@USERNAME", username);
+
+        addNew.ExecuteNonQuery();  
+        connection.Close();
+    }
+
+    public int GetCardQuantityForStore(int storeID, int cardID) {
+        int result = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)) {
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction()) {
+                try {
+                    string getQuantity = "SELECT quantity FROM Inventory WHERE storeID = @STOREID AND cardID = @CARDID";
+                    adapter.InsertCommand = new SqlCommand(getQuantity, connection, transaction);
+                    adapter.InsertCommand.Parameters.Add("@STOREID", SqlDbType.VarChar).Value = storeID;
+                    adapter.InsertCommand.Parameters.Add("@CARDID", SqlDbType.VarChar).Value = cardID;
+
+                    adapter.InsertCommand.Transaction = transaction;
+                    result = Convert.ToInt32(adapter.InsertCommand.ExecuteScalar());
+
+                    transaction.Commit();
+                    connection.Close();
+                }
+                catch (SqlException ex) {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.Source);
+                }
+            }
+        }
+        return result;
+    }
+
+    public void AdjustStockDB(string username, List<PokemonCard> cards) {
+        int cardQuantityFromStore;
+        foreach(PokemonCard card in cards) {
+            cardQuantityFromStore = GetCardQuantityForStore(card.StoreID, card.CardID);
+            if (cardQuantityFromStore == card.Quantity) {
+                using SqlConnection connection = new SqlConnection(_connectionString);
+                connection.Open();
+                string sqlCmd = "DELETE FROM Inventory WHERE cardID = @CARDID";
+                string sqlCmd2 = "DELETE FROM PokemonCard WHERE cardID = @CARDID";
+                using SqlCommand addNew2 = new SqlCommand(sqlCmd2, connection);
+                using SqlCommand addNew = new SqlCommand(sqlCmd, connection);
+                addNew2.Parameters.AddWithValue("@CARDID", card.CardID);
+                addNew.Parameters.AddWithValue("@CARDID", card.CardID);
+
+                addNew2.ExecuteNonQuery();
+                addNew.ExecuteNonQuery();  
+                connection.Close();
+            } else if (cardQuantityFromStore > card.Quantity) {
+                using SqlConnection connection = new SqlConnection(_connectionString);
+                connection.Open();
+                string sqlCmd = "UPDATE Inventory SET quantity = @QUANTITY WHERE cardID = @CARDID";
+                using SqlCommand addNew = new SqlCommand(sqlCmd, connection);
+                addNew.Parameters.AddWithValue("@QUANTITY", cardQuantityFromStore - card.Quantity);
+                addNew.Parameters.AddWithValue("@CARDID", card.CardID);
+
+                addNew.ExecuteNonQuery();  
+                connection.Close();
+            } else Console.WriteLine("Something messed up and you overbought.");
+        }
+    }
+
+    public bool OrderExists() {
+        using (SqlConnection connection = new SqlConnection(_connectionString)) {
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction()) {
+                try {
+                    string checkForOrder = "SELECT COUNT (*) orderNumber FROM OrderSummary";
+                    adapter.InsertCommand = new SqlCommand(checkForOrder, connection, transaction);
+
+                    adapter.InsertCommand.Transaction = transaction;
+                    int result = Convert.ToInt32(adapter.InsertCommand.ExecuteScalar());
+
+                    transaction.Commit();
+                    connection.Close();
+                    if (result != 0)
+                        return true;
+                    else return false;
+                }
+                catch (SqlException ex) {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.Source);
+                }
+            }
+        }
+        return false;
+    }
+
+    public int GetMaxOrderNumber() {
+        int maxNum = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)) {
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction()) {
+                try {
+                    string max = "SELECT MAX(orderNumber) FROM OrderSummary";
+                    adapter.InsertCommand = new SqlCommand(max, connection, transaction);
+
+                    adapter.InsertCommand.Transaction = transaction;
+                    
+                    maxNum = Convert.ToInt32(adapter.InsertCommand.ExecuteScalar());
+
+                    transaction.Commit();
+                    connection.Close();
+                }
+                catch (SqlException ex) {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.Source);
+                }
+            }
+        }
+        return maxNum;
+    }
+
+    public void CheckoutDB(string username, List<PokemonCard> cards, decimal price) {
+        decimal total = GetTotalPriceDB(username);
+        int orderNumber;
+        if (OrderExists())
+            orderNumber = GetMaxOrderNumber();
+        else orderNumber = 0;
+
+        orderNumber++;
+        
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        string sqlCmd = "INSERT INTO OrderSummary (orderNumber, username, storeID, cardID, quantity, orderDate, totalPrice) VALUES (@ORDERNUMBER, @USERNAME, @STOREID, @CARDID, @QUANTITY, @ORDERDATE, @TOTALPRICE)";
+        /*
+            string sqlCmd = "INSERT INTO OrderSummary (username, storeID, cardID, quantity, orderDate, totalPrice) 
+            VALUES (@USERNAME, @STOREID, @CARDID, @QUANTITY, @ORDERDATE, @TOTALPRICE)";
+        */
+        foreach(PokemonCard card in cards) {
+            using SqlCommand addNew = new SqlCommand(sqlCmd, connection);
+            addNew.Parameters.AddWithValue("@ORDERNUMBER", orderNumber);
+            addNew.Parameters.AddWithValue("@USERNAME", username);
+            addNew.Parameters.AddWithValue("@STOREID", card.StoreID);
+            addNew.Parameters.AddWithValue("@CARDID", card.CardID);
+            addNew.Parameters.AddWithValue("@QUANTITY", card.Quantity);
+            addNew.Parameters.AddWithValue("@ORDERDATE", DateTime.Today);
+            addNew.Parameters.AddWithValue("@TOTALPRICE", total);
+            addNew.ExecuteNonQuery();
+        }
+        connection.Close();
+        CleanAfterCheckoutDB(username);
+        AdjustStockDB(username, cards);
     }
 }

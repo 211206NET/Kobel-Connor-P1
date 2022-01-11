@@ -2,10 +2,21 @@
 namespace DL;
 public interface IRepo
 {
-    List<PokemonCard> GetAllPokemonCards();
+    List<PokemonCard> GetAllPokemonCardsDB();
     bool CheckDbForUsername(string s);
     bool LoginDB(string u, string p);
     void AddNewUserDB(Customer c);
-    void AddCardToShoppingCart(PokemonCard card, int quantity, string username);
-    bool CardAlreadyInShoppingCart(PokemonCard card);
+    void AddCardToShoppingCartDB(PokemonCard card, int quantity, string username);
+    bool CardAlreadyInShoppingCartDB(PokemonCard card);
+    List<StoreFront> GetAllStoreFrontsDB();
+    int CardsAvailableForIndividualStoreDB(StoreFront store);
+    List<PokemonCard> GetStoreCardsDB(int storeID);
+    List<PokemonCard> ShowYourCartDB(string s);
+    void DeleteCardFromShoppingCartDB(PokemonCard card, string s);
+    void CheckoutDB(string username, List<PokemonCard> cards, decimal price);
+    decimal GetTotalPriceDB(string username);
+    int GetCardQuantityForStore(int storeID, int cardID);
+    void CleanAfterCheckoutDB(string username);
+    void AdjustStockDB(string username, List<PokemonCard> cards);
+    int GetMaxOrderNumber();
 }

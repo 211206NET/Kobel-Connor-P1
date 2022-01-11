@@ -9,14 +9,4 @@ public class OrderSummary {
     public DateOnly OrderDate {get;set;}
     public List<ShoppingCart> ShoppingCarts {get;set;}
     public decimal TotalPrice {get;set;}
-    public decimal CalculateTotal() {
-        decimal total = 0;
-        if(this.ShoppingCarts?.Count > 0) {
-            foreach(ShoppingCart shopcart in this.ShoppingCarts) {
-                total += shopcart.CalculateRunningTotal();
-            }
-        }
-        this.TotalPrice = total;
-        return total;
-    }
 }

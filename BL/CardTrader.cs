@@ -9,45 +9,19 @@ public class CardTrader : IBL {
         _dl = repo;
     }
 
-    public void GetAllPokemonCards(string username) {
-        List<PokemonCard> pokemonCards = _dl.GetAllPokemonCards();
+    public List<PokemonCard> GetAllPokemonCards() {
+        List<PokemonCard> pokemonCards = _dl.GetAllPokemonCardsDB();
+        return pokemonCards;
+    }
 
-        int counter = 0;
-        string input;
-        string quantity;
+    public bool CardAlreadyInShoppingCart(PokemonCard card) {
+        if (_dl.CardAlreadyInShoppingCartDB(card))
+            return true;
+        else return false;
+    }
 
-        if (pokemonCards.Count == 0) {
-            Console.WriteLine("There are currently no Pokemon cards for sale.");
-        } else {
-            Console.WriteLine();
-            foreach (PokemonCard card in pokemonCards) {
-                Console.WriteLine("[" + ++counter + "]-------");
-                Console.WriteLine(card.CardName);
-                Console.WriteLine(card.CardSet);
-                Console.WriteLine(card.ConditionTitle);
-                Console.WriteLine(card.FoilTitle);
-                Console.WriteLine("$" + card.Price);
-                Console.WriteLine("Quantity availible: " + card.Quantity + "\n");
-            }
-            Console.WriteLine("\nSelect a card to add to your shopping cart less than " + counter);
-            input = Console.ReadLine();
-            while ((Convert.ToInt32(input) - 1) <= 0 || (Convert.ToInt32(input) - 1) > counter) {
-                Console.WriteLine("\nNot a viable selection.");
-                Console.WriteLine("Select a card to add to your shopping cart");
-                input = Console.ReadLine();
-            }
-            Console.WriteLine(pokemonCards[Convert.ToInt32(input) - 1].CardName);
-            Console.WriteLine("How many would you like to add?");
-            quantity = Console.ReadLine();
-            while (Convert.ToInt32(quantity) <= 0 || Convert.ToInt32(quantity) > pokemonCards[Convert.ToInt32(input) - 1].Quantity) {
-                Console.WriteLine("\nThere are only " + pokemonCards[Convert.ToInt32(input) - 1].Quantity + " of the selected card available, try again.");
-                quantity = Console.ReadLine();
-            }
-            if (!_dl.CardAlreadyInShoppingCart(pokemonCards[Convert.ToInt32(input) - 1])) {
-                _dl.AddCardToShoppingCart(pokemonCards[Convert.ToInt32(input) - 1], Convert.ToInt32(quantity), username);
-                Console.WriteLine("\nCards added!");
-            }
-        }
+    public void AddCardToShoppingCart(PokemonCard card, int quantity, string username) {
+        _dl.AddCardToShoppingCartDB(card, quantity, username);
     }
 
     public bool CheckUsernameExists(string s) {
@@ -66,5 +40,32 @@ public class CardTrader : IBL {
             return true;
         }
         return false;
+    }
+
+    public List<StoreFront> GetAllStoreFronts() {
+        List<StoreFront> allStores = _dl.GetAllStoreFrontsDB();
+        return allStores;
+    }
+
+    public int CardsAvailableForIndividualStore(StoreFront store) {
+        return _dl.CardsAvailableForIndividualStoreDB(store);
+    }
+
+    public List<PokemonCard> GetStoreCards(int storeID) {
+        List<PokemonCard> pokemonCards = _dl.GetStoreCardsDB(storeID);
+        return pokemonCards;
+    }
+
+    public List<PokemonCard> ShowYourCart(string s) {
+        List<PokemonCard> cards = _dl.ShowYourCartDB(s);
+        return cards;
+    }
+
+    public void DeleteCardFromShoppingCart(PokemonCard card, string username) {
+        _dl.DeleteCardFromShoppingCartDB(card, username);
+    }
+
+    public void Checkout(string username, List<PokemonCard> cards, decimal price) {
+        _dl.CheckoutDB(username, cards, price);
     }
 }

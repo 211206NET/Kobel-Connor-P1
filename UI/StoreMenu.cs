@@ -3,15 +3,14 @@ using BL;
 using Models;
 namespace UI;
 
-public class AllCards {
+public class StoreMenu {
     private IBL _bl;
-    public AllCards(IBL bl)
+    public StoreMenu(IBL bl)
     {
         _bl = bl;
     }
-    public void Start(string s) {
-        // DL Display all cards from all stores
-        List<PokemonCard> pokemonCards = _bl.GetAllPokemonCards();
+    public void Start(int storeID, string s) {
+        List<PokemonCard> pokemonCards = _bl.GetStoreCards(storeID);
 
         int counter = 0;
         string input;
@@ -31,8 +30,7 @@ public class AllCards {
                 Console.WriteLine("$" + card.Price);
                 Console.WriteLine("Quantity availible: " + card.Quantity + "\n");
             }
-            Console.WriteLine("\nSelect a card to add to your shopping cart less than " + counter);
-            Console.WriteLine("Or you can type 'back' to return to main menu.");
+            Console.WriteLine("\nSelect a card to add to your shopping cart or type 'back' to return to main menu");
             input = Console.ReadLine();
 
             while (!flag) {
@@ -55,13 +53,12 @@ public class AllCards {
                         flag = true;
                     }
                     else {
-                        Console.WriteLine("\nInvalid input. Enter either 'back' or a card's number.");
-                        Console.WriteLine("Select a card to remove or type 'checkout' to checkout (type 'back' to return to main menu)");
+                        Console.WriteLine("\nInvalid input. Enter either 'back', or a card's number.");
                         input = Console.ReadLine();
                     }
                 }
                 catch {
-                    Console.WriteLine("\nInvalid input. Enter either 'back' or a card's number.");
+                    Console.WriteLine("\nInvalid input. Enter either 'back', or a card's number.");
                     input = Console.ReadLine();
                 }
             }
