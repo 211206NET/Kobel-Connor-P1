@@ -68,4 +68,33 @@ public class CardTrader : IBL {
     public void Checkout(string username, List<PokemonCard> cards, decimal price) {
         _dl.CheckoutDB(username, cards, price);
     }
+
+    public List<StoreOrder> UserOrderHistory(string s) {
+        List<StoreOrder> storeOrders = _dl.UserOrderHistoryDB(s);
+        return storeOrders;
+    }
+
+    public bool MyStoreExist(string s) {
+        if (_dl.MyStoreExistDB(s)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void CreateYourStore(string username, string city, string state) {
+        _dl.CreateYourStoreDB(username, city, state);
+    }
+
+    public List<PokemonCard> MyStoreCards(string s) {
+        List<PokemonCard> cards = _dl.MyStoreCardsDB(s);
+        return cards;
+    }
+
+    public void DeleteCardFromMyStore(PokemonCard card, string s) {
+        _dl.DeleteCardFromMyStoreDB(card, s);
+    }
+
+    public void AddCardToStore(string s, string cardName, string cardSet, int conditionID, int foilID, decimal price, int quantity) {
+        _dl.AddCardToStoreDB(s, cardName, cardSet, conditionID, foilID, price, quantity);
+    }
 }

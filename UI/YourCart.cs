@@ -55,7 +55,7 @@ public class YourCart {
                 }
             }
             catch {
-                Console.WriteLine("\n2Invalid input. Enter either 'checkout', 'back', or a card's number.");
+                Console.WriteLine("\nInvalid input. Enter either 'checkout', 'back', or a card's number.");
                 input = Console.ReadLine();
             }
         }

@@ -1,17 +1,10 @@
 namespace Models;
 
 public class StoreOrder {
+    public int OrderNumber {get;set;}
     public int StoreID {get;set;}
-    public List<PokemonCard> PokemonCards {get;set;}
-    public decimal OrderPrice {get;set;}
-    public decimal CalculateOrderPrice() {
-        decimal orderPrice = 0;
-        if(this.PokemonCards?.Count > 0) {
-            foreach(PokemonCard pokecard in this.PokemonCards) {
-                orderPrice += pokecard.Price;
-            }
-        }
-        this.OrderPrice = orderPrice;
-        return orderPrice;
-    }
+    public int CardID {get;set;}
+    public int Quantity {get;set;}
+    public string Date {get;set;}
+    public decimal TotalPrice {get;set;}
 }

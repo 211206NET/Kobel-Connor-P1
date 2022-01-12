@@ -15,4 +15,10 @@ public interface IBL
     List<PokemonCard> ShowYourCart(string s);
     void DeleteCardFromShoppingCart(PokemonCard card, string s);
     void Checkout(string s, List<PokemonCard> cards, decimal price);
+    List<StoreOrder> UserOrderHistory(string s);
+    bool MyStoreExist(string s);
+    void CreateYourStore(string username, string city, string state);
+    List<PokemonCard> MyStoreCards(string s);
+    void DeleteCardFromMyStore(PokemonCard card, string s);
+    void AddCardToStore(string s, string cardName, string cardSet, int conditionID, int foilID, decimal price, int quantity);
 }

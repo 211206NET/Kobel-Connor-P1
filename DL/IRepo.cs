@@ -19,4 +19,10 @@ public interface IRepo
     void CleanAfterCheckoutDB(string username);
     void AdjustStockDB(string username, List<PokemonCard> cards);
     int GetMaxOrderNumber();
+    List<StoreOrder> UserOrderHistoryDB(string s);
+    bool MyStoreExistDB(string s);
+    void CreateYourStoreDB(string username, string city, string state);
+    List<PokemonCard> MyStoreCardsDB(string s);
+    void DeleteCardFromMyStoreDB(PokemonCard card, string s);
+    void AddCardToStoreDB(string s, string cardName, string cardSet, int conditionID, int foilID, decimal price, int quantity);
 }

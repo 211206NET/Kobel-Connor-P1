@@ -52,7 +52,8 @@ public class CustomerMenu {
             }
             else if (input == "2") {
                 // Storefront menu
-
+                MyStore myStore = new MyStore(new CardTrader(new DBRepo(File.ReadAllText("connectionstring.txt"))));
+                myStore.Start(s);
                 Console.WriteLine("\nAnything else?");
                 Console.WriteLine("[0] Inventory of all stores");
                 Console.WriteLine("[1] Availible stores");
@@ -79,8 +80,8 @@ public class CustomerMenu {
             }
             else if (input == "4") {
                 // Display customer order history
-
-
+                UserOrders userOrders = new UserOrders(new CardTrader(new DBRepo(File.ReadAllText("connectionstring.txt"))));
+                userOrders.Start(s);
                 Console.WriteLine("\nAnything else?");
                 Console.WriteLine("[0] Inventory of all stores");
                 Console.WriteLine("[1] Availible stores");
