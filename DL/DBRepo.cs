@@ -15,6 +15,11 @@ public class DBRepo : IRepo {
         _connectionString = connectionString;
     }
 
+    /// <summary>
+    /// checks database for username
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
     public bool CheckDbForUsername(string s) {
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
             connection.Open();
@@ -42,6 +47,12 @@ public class DBRepo : IRepo {
         return false;
     }
 
+    /// <summary>
+    /// verifies username and password match what's in DB
+    /// </summary>
+    /// <param name="u"></param>
+    /// <param name="p"></param>
+    /// <returns></returns>
     public bool LoginDB(string u, string p) {
         int count = 0;
         if (CheckDbForUsername(u))
@@ -74,6 +85,10 @@ public class DBRepo : IRepo {
         return false;
     }
 
+    /// <summary>
+    /// adds new user to DB
+    /// </summary>
+    /// <param name="c"></param>
     public void AddNewUserDB(Customer c) {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -89,6 +104,10 @@ public class DBRepo : IRepo {
         connection.Close();
     }
 
+    /// <summary>
+    /// gets all pokemon cards
+    /// </summary>
+    /// <returns></returns>
     public List<PokemonCard> GetAllPokemonCardsDB() {
         List<PokemonCard> allPokemonCards = new List<PokemonCard>();
 
@@ -122,6 +141,11 @@ public class DBRepo : IRepo {
         return allPokemonCards;
     }
 
+    /// <summary>
+    /// checks to see if card already exists in shopping cart
+    /// </summary>
+    /// <param name="card"></param>
+    /// <returns></returns>
     public bool CardAlreadyInShoppingCartDB(PokemonCard card) {
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
             connection.Open();
@@ -149,6 +173,12 @@ public class DBRepo : IRepo {
         return false;
     }
 
+    /// <summary>
+    /// adds a cart to the shopping cart of the user
+    /// </summary>
+    /// <param name="card"></param>
+    /// <param name="quantity"></param>
+    /// <param name="username"></param>
     public void AddCardToShoppingCartDB(PokemonCard card, int quantity, string username) {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -164,6 +194,11 @@ public class DBRepo : IRepo {
         connection.Close();
     }
 
+    /// <summary>
+    /// gets the total number of cards availible from a store
+    /// </summary>
+    /// <param name="store"></param>
+    /// <returns></returns>
     public int CardsAvailableForIndividualStoreDB(StoreFront store) {
         int total = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
@@ -189,6 +224,10 @@ public class DBRepo : IRepo {
         return total;
     }
     
+    /// <summary>
+    /// gets a list of all the store fronts
+    /// </summary>
+    /// <returns></returns>
     public List<StoreFront> GetAllStoreFrontsDB() {
         List<StoreFront> allStores = new List<StoreFront>();
 
@@ -218,6 +257,11 @@ public class DBRepo : IRepo {
         return allStores;
     }
 
+    /// <summary>
+    /// gets the cards of a specific store
+    /// </summary>
+    /// <param name="storeID"></param>
+    /// <returns></returns>
     public List<PokemonCard> GetStoreCardsDB(int storeID) {
         List<PokemonCard> allPokemonCards = new List<PokemonCard>();
 
@@ -259,6 +303,11 @@ public class DBRepo : IRepo {
         return allPokemonCards;
     }
 
+    /// <summary>
+    /// shows your shopping cart
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
     public List<PokemonCard> ShowYourCartDB(string s) {
         List<PokemonCard> cardCart = new List<PokemonCard>();
         using SqlConnection connection = new SqlConnection(_connectionString);
@@ -290,6 +339,11 @@ public class DBRepo : IRepo {
         return cardCart;
     }
 
+    /// <summary>
+    /// deletes a card from user's shopping cart
+    /// </summary>
+    /// <param name="card"></param>
+    /// <param name="username"></param>
     public void DeleteCardFromShoppingCartDB(PokemonCard card, string username) {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -302,6 +356,11 @@ public class DBRepo : IRepo {
         connection.Close();
     }
 
+    /// <summary>
+    /// gets the total price for ordersummary
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
     public decimal GetTotalPriceDB(string username) {
         decimal total = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
@@ -327,6 +386,10 @@ public class DBRepo : IRepo {
         return total;
     }
 
+    /// <summary>
+    /// empties the shopping cart
+    /// </summary>
+    /// <param name="username"></param>
     public void CleanAfterCheckoutDB(string username) {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -338,6 +401,12 @@ public class DBRepo : IRepo {
         connection.Close();
     }
 
+    /// <summary>
+    /// gets the original availible quantity of a card
+    /// </summary>
+    /// <param name="storeID"></param>
+    /// <param name="cardID"></param>
+    /// <returns></returns>
     public int GetCardQuantityForStore(int storeID, int cardID) {
         int result = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
@@ -364,6 +433,11 @@ public class DBRepo : IRepo {
         return result;
     }
 
+    /// <summary>
+    /// after checkout adjusts the stock availible in stores
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="cards"></param>
     public void AdjustStockDB(string username, List<PokemonCard> cards) {
         int cardQuantityFromStore;
         foreach(PokemonCard card in cards) {
@@ -395,6 +469,10 @@ public class DBRepo : IRepo {
         }
     }
 
+    /// <summary>
+    /// checks to see if pre-existing orders
+    /// </summary>
+    /// <returns></returns>
     public bool OrderExists() {
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
             connection.Open();
@@ -421,6 +499,10 @@ public class DBRepo : IRepo {
         return false;
     }
 
+    /// <summary>
+    /// sets up the next ordernumber ID
+    /// </summary>
+    /// <returns></returns>
     public int GetMaxOrderNumber() {
         int maxNum = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
@@ -446,6 +528,12 @@ public class DBRepo : IRepo {
         return maxNum;
     }
 
+    /// <summary>
+    /// makes order summary
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="cards"></param>
+    /// <param name="price"></param>
     public void CheckoutDB(string username, List<PokemonCard> cards, decimal price) {
         decimal total = GetTotalPriceDB(username);
         int orderNumber;
@@ -478,6 +566,11 @@ public class DBRepo : IRepo {
         AdjustStockDB(username, cards);
     }
 
+    /// <summary>
+    /// gets user order history
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
     public List<StoreOrder> UserOrderHistoryDB(string username) {
         List<StoreOrder> storeOrders = new List<StoreOrder>();
         using SqlConnection connection = new SqlConnection(_connectionString);
@@ -518,6 +611,11 @@ public class DBRepo : IRepo {
         return storeOrders;
     }
 
+    /// <summary>
+    /// checks if the user has already set up their store
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
     public bool MyStoreExistDB(string s) {
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
             connection.Open();
@@ -545,6 +643,12 @@ public class DBRepo : IRepo {
         return false;
     }
 
+    /// <summary>
+    /// creates the user's storefront
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="city"></param>
+    /// <param name="state"></param>
     public void CreateYourStoreDB(string username, string city, string state) {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -558,6 +662,11 @@ public class DBRepo : IRepo {
         connection.Close();
     }
 
+    /// <summary>
+    /// gets the cards in my storefront
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
     public List<PokemonCard> MyStoreCardsDB(string s) {
         List<PokemonCard> cards = new List<PokemonCard>();
 
@@ -591,6 +700,11 @@ public class DBRepo : IRepo {
         return cards;
     }
 
+    /// <summary>
+    /// deletes card from my store
+    /// </summary>
+    /// <param name="card"></param>
+    /// <param name="s"></param>
     public void DeleteCardFromMyStoreDB(PokemonCard card, string s) {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -609,6 +723,11 @@ public class DBRepo : IRepo {
         connection.Close();
     }
 
+    /// <summary>
+    /// gets the store ID of a username
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
     public int GetStoreID(string s) {
         int result = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
@@ -634,15 +753,18 @@ public class DBRepo : IRepo {
         return result;
     }
 
-    public int GetCardID(string s) {
+    /// <summary>
+    /// sets up the next cardID
+    /// </summary>
+    /// <returns></returns>
+    public int GetCardID() {
         int result = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)) {
             connection.Open();
             using (SqlTransaction transaction = connection.BeginTransaction()) {
                 try {
-                    string sqlCmd = "SELECT MAX(cardID) FROM Inventory INNER JOIN StoreFront ON StoreFront.storeID = Inventory.storeID WHERE username = @USERNAME";
+                    string sqlCmd = "SELECT MAX(cardID) FROM Inventory";
                     adapter.InsertCommand = new SqlCommand(sqlCmd, connection, transaction);
-                    adapter.InsertCommand.Parameters.Add("@USERNAME", SqlDbType.VarChar).Value = s;
 
                     adapter.InsertCommand.Transaction = transaction;
                     result = Convert.ToInt32(adapter.InsertCommand.ExecuteScalar());
@@ -658,20 +780,24 @@ public class DBRepo : IRepo {
         }
         return result;
     }
-    public void AddCardToStoreDB(string s, string cardName, string cardSet, int conditionID, int foilID, decimal price, int quantity) {
-        int storeID = GetStoreID(s);
+
+    /// <summary>
+    /// adds a card to my PokemonCard
+    /// </summary>
+    /// <param name="cardName"></param>
+    /// <param name="cardSet"></param>
+    /// <param name="conditionID"></param>
+    /// <param name="foilID"></param>
+    /// <param name="price"></param>
+    public void AddCardToPokemonCard(string cardName, string cardSet, int conditionID, int foilID, decimal price) {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
-        string sqlCmd = "INSERT INTO Inventory (storeID, quantity) VALUES (@STOREID, @QUANTITY)";
+
+        int cardID = GetCardID();
         string sqlCmd2 = "INSERT INTO PokemonCard (cardID, cardName, cardSet, conditionID, foilID, price) VALUES (@CARDID, @CARDNAME, @CARDSET, @CONDITIONID, @FOILID, @PRICE)";
-
-        using SqlCommand addNew = new SqlCommand(sqlCmd, connection);
+        
         using SqlCommand addNew2 = new SqlCommand(sqlCmd2, connection);
-        addNew.Parameters.AddWithValue("@STOREID", storeID);
-        addNew.Parameters.AddWithValue("@QUANTITY", quantity);
-
-        int cardID = GetCardID(s);
-        addNew.ExecuteNonQuery();
+        
         addNew2.Parameters.AddWithValue("@CARDID", cardID);
         addNew2.Parameters.AddWithValue("@CARDNAME", cardName);
         addNew2.Parameters.AddWithValue("@CARDSET", cardSet);
@@ -680,7 +806,31 @@ public class DBRepo : IRepo {
         addNew2.Parameters.AddWithValue("@PRICE", price);
 
         addNew2.ExecuteNonQuery();
+        connection.Close();
+    }
+
+    /// <summary>
+    /// adds a card to Inventory
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="cardName"></param>
+    /// <param name="cardSet"></param>
+    /// <param name="conditionID"></param>
+    /// <param name="foilID"></param>
+    /// <param name="price"></param>
+    /// <param name="quantity"></param>
+    public void AddCardToStoreDB(string s, string cardName, string cardSet, int conditionID, int foilID, decimal price, int quantity) {
+        int storeID = GetStoreID(s);
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        string sqlCmd = "INSERT INTO Inventory (storeID, quantity) VALUES (@STOREID, @QUANTITY)";
+        using SqlCommand addNew = new SqlCommand(sqlCmd, connection);
+        addNew.Parameters.AddWithValue("@STOREID", storeID);
+        addNew.Parameters.AddWithValue("@QUANTITY", quantity);
+
+        addNew.ExecuteNonQuery();
         
         connection.Close();
+        AddCardToPokemonCard(cardName, cardSet, conditionID, foilID, price);
     }
 }
