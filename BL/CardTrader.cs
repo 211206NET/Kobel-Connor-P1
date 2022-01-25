@@ -78,6 +78,10 @@ public class CardTrader : IBL {
     /// <returns>list of StoreFronts</returns>
     public List<StoreFront> GetAllStoreFronts() {
         List<StoreFront> allStores = _dl.GetAllStoreFrontsDB();
+        foreach (StoreFront storeFront in allStores)
+        {
+            storeFront.CardsAvailable = CardsAvailableForIndividualStore(storeFront);
+        }
         return allStores;
     }
 

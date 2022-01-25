@@ -210,7 +210,16 @@ public class DBRepo : IRepo {
                     adapter.InsertCommand.Parameters.Add("@STOREID", SqlDbType.VarChar).Value = store.StoreID;
 
                     adapter.InsertCommand.Transaction = transaction;
-                    total = Convert.ToInt32(adapter.InsertCommand.ExecuteScalar());
+
+                    try
+                    {
+                        total = Convert.ToInt32(adapter.InsertCommand.ExecuteScalar());
+                    }
+                    catch (InvalidCastException ex)
+                    {
+                        total = 0;
+                    }
+                    
 
                     transaction.Commit();
                     connection.Close();
